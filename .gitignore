@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+.venv/
+venv/
+.envrc
+
+# VS Code & IDEs
+.vscode/
+.idea/
+
+# Docker
+*.log
+*.pid
+*.seed
+*.pid.lock
+docker-compose.override.yml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Kubernetes
+*.yaml~    # backup temp files
+*.yml~
+k8s/.temp/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Pipenv
+Pipfile.lock
+
+# pytest
+.cache/
+.pytest_cache/
+
+# Local development
+*.swp
+*.swo
+
+# Terraform local state & cache
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Terraform provider binaries
+terraform/**/terraform-provider-*
+terraform/**/*.exe
+terraform/**/*.zip
+
+# AWS CLI installer
+awscliv2.zip
+
+# Minikube binary
+minikube-linux-amd64
+minikube-windows-amd64.exe
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# aws
+.aws/

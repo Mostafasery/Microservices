@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myflaskapp-service
+  namespace: microservices
+spec:
+  type: LoadBalancer        # Use MetalLB to assign an external IP
+  selector:
+    app: myflaskapp         # Match your Deployment's app label
+  ports:
+    - protocol: TCP
+      port: 5000           # External port
+      targetPort: 5000     # Pod container port
+
+
