@@ -45,15 +45,9 @@ jobs:
     #     cd terraform
     #     terraform apply -auto-approve
     
-    - name: Get cluster name
-      id: cluster
-      run: |
-        cd terraform
-        echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
-    
     - name: Configure kubectl
       run: |
-        aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
+        aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
 
 
     - name: Create GHCR pull secret
