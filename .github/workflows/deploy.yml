@@ -42,10 +42,16 @@ jobs:
         terraform import aws_iam_role.eks_node_role eks-node-role
         terraform import aws_iam_role.github_actions_role GitHubActions-EKS-Role
     
-    - name: Terraform Apply
+    - name: Terraform Apply IAM Roles First
+      run: |
+        cd terraform
+        terraform apply -auto-approve -target=aws_iam_role.eks_cluster_role -target=aws_iam_role.eks_node_role -target=aws_iam_role.github_actions_role
+    
+    - name: Terraform Apply Remaining Resources
       run: |
         cd terraform
         terraform apply -auto-approve
+
 
     
 
