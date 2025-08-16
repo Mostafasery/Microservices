@@ -59,24 +59,14 @@ Pipfile.lock
 *.tfstate
 *.tfstate.backup
 
-# Terraform provider binaries
-terraform/**/terraform-provider-*
-terraform/**/*.exe
-terraform/**/*.zip
+# # Terraform provider binaries
+# terraform/**/terraform-provider-*
+# terraform/**/*.exe
+# terraform/**/*.zip
+# terraform.tfvars/
 
 # AWS CLI installer
 awscliv2.zip
 
-# Minikube binary
-minikube-linux-amd64
-minikube-windows-amd64.exe
 
-# Python cache
-__pycache__/
-*.pyc
 
-# Logs
-*.log
-
-# aws
-.aws/
