@@ -34,25 +34,16 @@ jobs:
       run: |
         cd terraform
         terraform init
-    
-    - name: Terraform Import Existing IAM Roles
-      run: |
-        cd terraform
-        terraform import aws_iam_role.eks_cluster_role eks-cluster-role
-        terraform import aws_iam_role.eks_node_role eks-node-role
-        terraform import aws_iam_role.github_actions_role GitHubActions-EKS-Role
-    
-    - name: Terraform Apply IAM Roles First
-      run: |
-        cd terraform
-        terraform apply -auto-approve -target=aws_iam_role.eks_cluster_role -target=aws_iam_role.eks_node_role -target=aws_iam_role.github_actions_role
-    
-    - name: Terraform Apply Remaining Resources
+        
+    # - name: Terraform Destroy
+    #   run: |
+    #     cd terraform
+    #     terraform destroy
+
+    - name: Terraform Apply
       run: |
         cd terraform
         terraform apply -auto-approve
-
-
     
 
     - name: Configure kubectl
