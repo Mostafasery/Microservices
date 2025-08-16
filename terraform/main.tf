@@ -67,7 +67,7 @@ resource "aws_route_table_association" "public" {
 # --------------------------
 # IAM Roles for EKS Cluster
 # --------------------------
-resource "aws_iam_role" "eks_cluster_role" {
+resource "aws_iam_role" "eks_cluster_role--gha" {
   name = "eks-cluster-role"
 
   assume_role_policy = jsonencode({
@@ -116,7 +116,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 # Node Group IAM Role
 # --------------------------
 resource "aws_iam_role" "eks_node_role" {
-  name = "eks-node-role"
+  name = "eks-node-role-gha"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -177,7 +177,7 @@ resource "aws_eks_node_group" "eks_nodes" {
 # GitHub Actions OIDC Role
 # --------------------------
 resource "aws_iam_role" "github_actions_role" {
-  name = "GitHubActions-EKS-Role"
+  name = "GitHubActions-EKS-Role-gha"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
