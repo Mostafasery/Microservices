@@ -60,12 +60,12 @@ jobs:
           --docker-email=${{ secrets.GHCR_EMAIL }} \
           -n microservices || true
 
-    - name: Deploy Namespace
-      run: kubectl apply -f k8s/namespace.yaml
+    # - name: Deploy Namespace
+    #   run: kubectl apply -f k8s/namespace.yaml
     
     - name: Deploy App
       run: |
         cd k8s
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
        
