@@ -14,7 +14,7 @@ spec:
         app: myflaskapp
     spec:
       containers:
-        - name: myflaskapp-container
-          image: 510025/myflaskapp:latest
-          ports:
-            - containerPort: 5000
+      - name: myflaskapp
+        image: ghcr.io/mostafasery/microservices:latest
+        ports:
+        - containerPort: 5000
