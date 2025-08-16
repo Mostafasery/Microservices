@@ -45,9 +45,11 @@ jobs:
     #     cd terraform
     #     terraform apply -auto-approve
     
-    # - name: Configure kubectl
-    #   run: |
-    #     aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
+    - name: Configure kubectl
+      run: |
+        aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
+        kubectl get nodes
+
 
     - name: Deploy Namespace
       run: kubectl apply -f k8s/namespace.yaml
