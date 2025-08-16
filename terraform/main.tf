@@ -65,7 +65,7 @@ resource "aws_route_table_association" "public" {
 }
 
 # --------------------------
-# IAM Roles for EKS
+# IAM Roles for EKS Cluster
 # --------------------------
 resource "aws_iam_role" "eks_cluster_role" {
   name = "eks-cluster-role"
@@ -174,6 +174,44 @@ resource "aws_eks_node_group" "eks_nodes" {
 }
 
 # --------------------------
+# GitHub Actions OIDC Role
+# --------------------------
+resource "aws_iam_role" "github_actions_role" {
+  name = "GitHubActions-EKS-Role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Federated = "arn:aws:iam::171433610298:oidc-provider/token.actions.githubusercontent.com"
+        },
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+          },
+          StringLike = {
+            "token.actions.githubusercontent.com:sub" = "repo:Mostafasery/*"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_AmazonEKSClusterPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = aws_iam_role.github_actions_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_AmazonEKSVPCResourceController" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  role       = aws_iam_role.github_actions_role.name
+}
+
+# --------------------------
 # Kubernetes Provider
 # --------------------------
 data "aws_eks_cluster_auth" "eks" {
@@ -184,6 +222,33 @@ provider "kubernetes" {
   host                   = aws_eks_cluster.eks_cluster.endpoint
   cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.eks.token
+}
+
+# --------------------------
+# aws-auth ConfigMap (including GitHub Actions role)
+# --------------------------
+resource "kubernetes_config_map" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+    mapRoles = yamlencode([
+      {
+        rolearn  = aws_iam_role.eks_node_role.arn
+        username = "system:node:{{EC2PrivateDNSName}}"
+        groups   = ["system:bootstrappers", "system:nodes"]
+      },
+      {
+        rolearn  = aws_iam_role.github_actions_role.arn
+        username = "github-actions"
+        groups   = ["system:masters"]
+      }
+    ])
+  }
+
+  depends_on = [aws_eks_node_group.eks_nodes]
 }
 
 # --------------------------
@@ -199,4 +264,8 @@ output "cluster_endpoint" {
 
 output "node_group_role_arn" {
   value = aws_iam_role.eks_node_role.arn
+}
+
+output "github_actions_role_arn" {
+  value = aws_iam_role.github_actions_role.arn
 }
