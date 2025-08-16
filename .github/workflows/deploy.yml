@@ -1,0 +1,57 @@
+name: Deploy Flask App to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: myflaskapp
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform plan -auto-approve
+
+    # - name: Configure kubectl
+    #   run: |
+    #     aws eks update-kubeconfig --name $(terraform output -raw cluster_name) --region $AWS_REGION
+
+    # - name: Log in to Amazon ECR
+    #   id: ecr
+    #   run: |
+    #     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+    #     aws ecr create-repository --repository-name $ECR_REPOSITORY || true
+
+    # - name: Build and Push Docker image
+    #   run: |
+    #     IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+    #     docker build -t $IMAGE_URI ./app
+    #     docker push $IMAGE_URI
+
+    # - name: Deploy to EKS
+    #   run: |
+    #     kubectl apply -f k8s/deployment.yaml
+    #     kubectl apply -f k8s/service.yaml
