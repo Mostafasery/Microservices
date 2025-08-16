@@ -29,15 +29,16 @@ jobs:
       with:
         terraform_version: 1.5.0
         
-    - name: Terraform Destroy
-      run: |
-        cd terraform
-        terraform destroy
 
     - name: Terraform Init
       run: |
         cd terraform
         terraform init
+        
+    - name: Terraform Destroy
+      run: |
+        cd terraform
+        terraform destroy
 
     - name: Terraform Apply
       run: |
