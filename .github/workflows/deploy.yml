@@ -32,8 +32,8 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    - name: Terraform Apply
-      run: terraform plan -auto-approve
+    - name: Terraform Plan
+      run: terraform plan
 
     # - name: Configure kubectl
     #   run: |
