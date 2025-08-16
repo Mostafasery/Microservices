@@ -50,7 +50,7 @@ jobs:
       run: |
         cd terraform
         echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
-
+    
     - name: Configure kubectl
       run: |
         aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
