@@ -45,9 +45,12 @@ jobs:
     #     cd terraform
     #     terraform apply -auto-approve
     
+
     - name: Configure kubectl
       run: |
+        echo "Updating kubeconfig for EKS cluster..."
         aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
+        kubectl config current-context
         kubectl get nodes
 
 
@@ -63,6 +66,7 @@ jobs:
           --docker-email=${{ secrets.GHCR_EMAIL }} \
           --namespace microservices \
           --dry-run=client -o yaml | kubectl apply -f -
+
 
     
     - name: Deploy App
