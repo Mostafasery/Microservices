@@ -49,11 +49,12 @@ jobs:
       id: cluster
       run: |
         cd terraform
-        echo "cluster_name=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
+        echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
 
     - name: Configure kubectl
       run: |
-        aws eks update-kubeconfig --name ${{ env.cluster_name }} --region $AWS_REGION
+        aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
+
 
     - name: Create GHCR pull secret
       run: |
