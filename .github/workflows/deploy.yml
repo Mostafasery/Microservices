@@ -54,14 +54,15 @@ jobs:
     - name: Deploy Namespace
       run: kubectl apply -f k8s/namespace.yaml
     
-    - name: Create GHCR pull secret
+    - name: Create GHCR secret
       run: |
         kubectl create secret docker-registry ghcr-secret \
           --docker-server=ghcr.io \
           --docker-username=${{ secrets.GHCR_USERNAME }} \
           --docker-password=${{ secrets.GHCR_PAT }} \
           --docker-email=${{ secrets.GHCR_EMAIL }} \
-          -n microservices
+          --namespace microservices \
+          --dry-run=client -o yaml | kubectl apply -f -
 
     
     - name: Deploy App
