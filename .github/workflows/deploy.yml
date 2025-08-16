@@ -28,16 +28,17 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_version: 1.5.0
+        
+    - name: Terraform Destroy
+      run: |
+        cd terraform
+        terraform destroy
 
     - name: Terraform Init
       run: |
         cd terraform
         terraform init
 
-        terraform import aws_iam_role.eks_cluster_role eks-cluster-role
-        terraform import aws_iam_role.aws_iam_role.eks_node_role eks-node-role
-
-    
     - name: Terraform Apply
       run: |
         cd terraform
