@@ -49,19 +49,18 @@ jobs:
       run: |
         aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
 
-
+    - name: Deploy Namespace
+      run: kubectl apply -f k8s/namespace.yaml
+    
     - name: Create GHCR pull secret
       run: |
-        cd k8s
         kubectl create secret docker-registry ghcr-secret \
           --docker-server=ghcr.io \
           --docker-username=${{ secrets.GHCR_USERNAME }} \
           --docker-password=${{ secrets.GHCR_PAT }} \
           --docker-email=${{ secrets.GHCR_EMAIL }} \
-          -n microservices || true
+          -n microservices
 
-    # - name: Deploy Namespace
-    #   run: kubectl apply -f k8s/namespace.yaml
     
     - name: Deploy App
       run: |
