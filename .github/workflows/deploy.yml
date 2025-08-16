@@ -24,31 +24,31 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.0
+    # - name: Set up Terraform
+    #   uses: hashicorp/setup-terraform@v2
+    #   with:
+    #     terraform_version: 1.5.0
         
 
-    - name: Terraform Init
-      run: |
-        cd terraform
-        terraform init
+    # - name: Terraform Init
+    #   run: |
+    #     cd terraform
+    #     terraform init
         
-    - name: Terraform Destroy
-      run: |
-        cd terraform
-        terraform destroy
+    # - name: Terraform Destroy
+    #   run: |
+    #     cd terraform
+    #     terraform destroy
 
-    - name: Terraform Apply
-      run: |
-        cd terraform
-        terraform apply -auto-approve
+    # - name: Terraform Apply
+    #   run: |
+    #     cd terraform
+    #     terraform apply -auto-approve
     
-    - name: Configure kubectl
-      run: |
+    # - name: Configure kubectl
+    #   run: |
         
-        aws eks update-kubeconfig --name $(terraform output -raw cluster_name) --region $AWS_REGION
+    #     aws eks update-kubeconfig --name $(terraform output -raw cluster_name) --region $AWS_REGION
 
     - name: Create GHCR pull secret
       run: |
@@ -68,4 +68,4 @@ jobs:
         cd k8s
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/ingress.yaml
+       
