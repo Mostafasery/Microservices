@@ -1,7 +1,9 @@
 name: Deploy Flask App to EKS
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -39,7 +41,7 @@ jobs:
     
     - name: Configure kubectl
       run: |
-        cd k8s
+        
         aws eks update-kubeconfig --name $(terraform output -raw cluster_name) --region $AWS_REGION
 
     - name: Create GHCR pull secret
