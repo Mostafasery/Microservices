@@ -70,6 +70,10 @@ jobs:
           --namespace microservices \
           --dry-run=client -o yaml | kubectl apply -f -
 
+    - name: aws-auth
+      run: |
+        kubectl apply -f aws-auth.yaml
+
     - name: Deploy App
       run: |
         kubectl apply -f k8s/deployment.yaml
