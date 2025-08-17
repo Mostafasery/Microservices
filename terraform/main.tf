@@ -165,6 +165,7 @@ resource "aws_eks_node_group" "eks_nodes" {
   ]
 }
 
+
 # --------------------------
 # AWS Caller Identity
 # --------------------------
