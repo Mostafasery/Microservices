@@ -10,8 +10,3 @@ variable "cluster_name" {
   default     = "my-eks-cluster"
 }
 
-variable "my_iam_user_name" {
-  description = "The IAM user to map as cluster admin (system:masters)"
-  type        = string
-  default     = "terraform-eks-admin"  # <-- updated to your new IAM user
-}

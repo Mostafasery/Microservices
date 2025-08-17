@@ -157,17 +157,6 @@ resource "aws_eks_node_group" "eks_nodes" {
   ]
 }
 
-# --------------------------
-# IAM User for Terraform Admin
-# --------------------------
-resource "aws_iam_user" "terraform_admin" {
-  name = "terraform-eks-admin"
-}
-
-resource "aws_iam_user_policy_attachment" "terraform_admin_attach" {
-  user       = aws_iam_user.terraform_admin.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
 
 # --------------------------
 # AWS Caller Identity
@@ -191,7 +180,7 @@ metadata:
   namespace: kube-system
 data:
   mapUsers: |
-    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/terraform-eks-admin
+    - userarn: userarn: arn:aws:iam::171433610298:root
       username: admin
       groups:
         - system:masters
@@ -199,6 +188,7 @@ EOF
 EOT
   }
 }
+
 
 # --------------------------
 # Outputs
