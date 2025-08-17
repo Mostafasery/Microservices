@@ -5,11 +5,21 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.20"
-    }
   }
+}
+
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+variable "cluster_name" {
+  default = "my-eks-cluster"
+}
+
+variable "my_iam_user_name" {
+  description = "The IAM user to map as cluster admin"
+  type        = string
+  default     = "my-eks-admin-user" # <-- change to your IAM username
 }
 
 provider "aws" {
@@ -23,9 +33,7 @@ resource "aws_vpc" "eks_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
 
-  tags = {
-    Name = "eks-vpc"
-  }
+  tags = { Name = "eks-vpc" }
 }
 
 data "aws_availability_zones" "available" {}
@@ -37,9 +45,7 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 
-  tags = {
-    Name = "eks-public-${count.index}"
-  }
+  tags = { Name = "eks-public-${count.index}" }
 }
 
 resource "aws_internet_gateway" "igw" {
@@ -174,29 +180,35 @@ resource "aws_eks_node_group" "eks_nodes" {
 }
 
 # --------------------------
-# Kubernetes Provider
+# AWS Caller Identity
 # --------------------------
-data "aws_eks_cluster_auth" "eks" {
-  name = aws_eks_cluster.eks_cluster.name
-}
-
-provider "kubernetes" {
-  host                   = aws_eks_cluster.eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.eks_cluster.certificate_authority[0].data)
-  token                  = data.aws_eks_cluster_auth.eks.token
-}
+data "aws_caller_identity" "current" {}
 
 # --------------------------
-# Kubernetes Namespace
+# Local-exec to configure aws-auth
 # --------------------------
-resource "kubernetes_namespace" "microservices" {
-  metadata {
-    name = "microservices"
+resource "null_resource" "aws_auth" {
+  depends_on = [aws_eks_cluster.eks_cluster]
+
+  provisioner "local-exec" {
+    command = <<EOT
+aws eks update-kubeconfig --name ${aws_eks_cluster.eks_cluster.name} --region ${var.aws_region}
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapUsers: |
+    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.my_iam_user_name}
+      username: admin
+      groups:
+        - system:masters
+EOF
+EOT
   }
 }
-
-
-
 
 # --------------------------
 # Outputs
@@ -213,6 +225,5 @@ output "node_group_role_arn" {
   value = aws_iam_role.eks_node_role.arn
 }
 
-output "myflaskapp_lb" {
-  value = kubernetes_service.myflaskapp_service.status[0].load_balancer[0].ingress[0].hostname
-}
+
+
