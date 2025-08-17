@@ -30,10 +30,10 @@ jobs:
         terraform_version: 1.5.0
         
 
-    - name: Terraform Init
-      run: |
-        cd terraform
-        terraform init
+    # - name: Terraform Init
+    #   run: |
+    #     cd terraform
+    #     terraform init
 
         
     # - name: Terraform Destroy
@@ -41,10 +41,10 @@ jobs:
     #     cd terraform
     #     terraform destroy
 
-    - name: Terraform Apply
-      run: |
-        cd terraform
-        terraform apply -auto-approve
+    # - name: Terraform Apply
+    #   run: |
+    #     cd terraform
+    #     terraform apply -auto-approve
     
 
     - name: Configure kubectl

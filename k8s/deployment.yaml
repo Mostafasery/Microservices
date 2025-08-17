@@ -16,8 +16,8 @@ spec:
       containers:
       - name: myflaskapp
         image: ghcr.io/mostafasery/microservices:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
-      imagePullSecrets:
-      - name: ghcr-secret
+
 
