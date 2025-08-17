@@ -187,6 +187,102 @@ provider "kubernetes" {
 }
 
 # --------------------------
+# Kubernetes Namespace
+# --------------------------
+resource "kubernetes_namespace" "microservices" {
+  metadata {
+    name = "microservices"
+  }
+}
+
+# --------------------------
+# Kubernetes Image Pull Secret
+# --------------------------
+resource "kubernetes_secret" "ghcr_secret" {
+  metadata {
+    name      = "ghcr-secret"
+    namespace = kubernetes_namespace.microservices.metadata[0].name
+  }
+
+  data = {
+    ".dockerconfigjson" = filebase64("${path.module}/.dockerconfigjson") # your GHCR auth
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+}
+
+# --------------------------
+# Kubernetes Deployment
+# --------------------------
+resource "kubernetes_deployment" "myflaskapp" {
+  depends_on = [kubernetes_namespace.microservices, kubernetes_secret.ghcr_secret]
+
+  metadata {
+    name      = "myflaskapp"
+    namespace = kubernetes_namespace.microservices.metadata[0].name
+  }
+
+  spec {
+    replicas = 2
+
+    selector {
+      match_labels = {
+        app = "myflaskapp"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "myflaskapp"
+        }
+      }
+
+      spec {
+        container {
+          name  = "myflaskapp"
+          image = "ghcr.io/mostafasery/microservices:latest"
+
+          port {
+            container_port = 5000
+          }
+        }
+
+        image_pull_secrets {
+          name = kubernetes_secret.ghcr_secret.metadata[0].name
+        }
+      }
+    }
+  }
+}
+
+# --------------------------
+# Kubernetes Service
+# --------------------------
+resource "kubernetes_service" "myflaskapp_service" {
+  depends_on = [kubernetes_deployment.myflaskapp]
+
+  metadata {
+    name      = "myflaskapp-service"
+    namespace = kubernetes_namespace.microservices.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = kubernetes_deployment.myflaskapp.spec[0].template[0].metadata[0].labels.app
+    }
+
+    port {
+      protocol    = "TCP"
+      port        = 5000
+      target_port = 5000
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+# --------------------------
 # Outputs
 # --------------------------
 output "cluster_name" {
@@ -199,4 +295,8 @@ output "cluster_endpoint" {
 
 output "node_group_role_arn" {
   value = aws_iam_role.eks_node_role.arn
+}
+
+output "myflaskapp_lb" {
+  value = kubernetes_service.myflaskapp_service.status[0].load_balancer[0].ingress[0].hostname
 }
