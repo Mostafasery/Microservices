@@ -4,12 +4,12 @@ metadata:
   name: myflaskapp-service
   namespace: microservices
 spec:
-  type: LoadBalancer        # Use MetalLB to assign an external IP
+  type: LoadBalancer
   selector:
-    app: myflaskapp         # Match your Deployment's app label
+    app: myflaskapp
   ports:
     - protocol: TCP
-      port: 5000           # External port
-      targetPort: 5000     # Pod container port
+      port: 80         # external port (publicly accessible)
+      targetPort: 5000 # matches your Flask app container port
 
 
