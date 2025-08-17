@@ -8,20 +8,6 @@ terraform {
   }
 }
 
-variable "aws_region" {
-  default = "us-east-1"
-}
-
-variable "cluster_name" {
-  default = "my-eks-cluster"
-}
-
-variable "my_iam_user_name" {
-  description = "The IAM user to map as cluster admin"
-  type        = string
-  default     = "my-eks-admin-user" # <-- change to your IAM username
-}
-
 provider "aws" {
   region = var.aws_region
 }
