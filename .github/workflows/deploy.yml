@@ -72,7 +72,7 @@ jobs:
 
     - name: aws-auth
       run: |
-        kubectl apply -f aws-auth.yaml
+        kubectl apply -f k8s/aws-auth.yaml
 
     - name: Deploy App
       run: |
