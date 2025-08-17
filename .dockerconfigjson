@@ -1,0 +1,10 @@
+cat <<EOF > .dockerconfigjson
+{
+  "auths": {
+    "ghcr.io": {
+      "username": "Mostafasery",
+      "password": "Mostafasery_2525"
+    }
+  }
+}
+EOF
