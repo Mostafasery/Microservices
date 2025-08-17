@@ -56,9 +56,8 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-
 # --------------------------
-# IAM Roles for EKS
+# IAM Role for EKS Cluster
 # --------------------------
 resource "aws_iam_role" "eks_cluster_role" {
   name = "eks-cluster-role"
@@ -71,10 +70,6 @@ resource "aws_iam_role" "eks_cluster_role" {
       Action    = "sts:AssumeRole"
     }]
   })
-
-  lifecycle {
-    prevent_destroy = false
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_AmazonEKSClusterPolicy" {
@@ -119,10 +114,6 @@ resource "aws_iam_role" "eks_node_role" {
       Action    = "sts:AssumeRole"
     }]
   })
-
-  lifecycle {
-    prevent_destroy = false
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodePolicy" {
@@ -166,6 +157,17 @@ resource "aws_eks_node_group" "eks_nodes" {
   ]
 }
 
+# --------------------------
+# IAM User for Terraform Admin
+# --------------------------
+resource "aws_iam_user" "terraform_admin" {
+  name = "terraform-eks-admin"
+}
+
+resource "aws_iam_user_policy_attachment" "terraform_admin_attach" {
+  user       = aws_iam_user.terraform_admin.name
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
 
 # --------------------------
 # AWS Caller Identity
@@ -189,7 +191,7 @@ metadata:
   namespace: kube-system
 data:
   mapUsers: |
-    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.my_iam_user_name}
+    - userarn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/terraform-eks-admin
       username: admin
       groups:
         - system:masters
@@ -212,6 +214,7 @@ output "cluster_endpoint" {
 output "node_group_role_arn" {
   value = aws_iam_role.eks_node_role.arn
 }
+
 
 
 

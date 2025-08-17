@@ -30,10 +30,10 @@ jobs:
         terraform_version: 1.5.0
         
 
-    # - name: Terraform Init
-    #   run: |
-    #     cd terraform
-    #     terraform init
+    - name: Terraform Init
+      run: |
+        cd terraform
+        terraform init
 
         
     # - name: Terraform Destroy
@@ -41,15 +41,15 @@ jobs:
     #     cd terraform
     #     terraform destroy
 
-    # - name: Terraform Apply
-    #   run: |
-    #     cd terraform
-    #     terraform apply -auto-approve
+    - name: Terraform Apply
+      run: |
+        cd terraform
+        terraform apply -auto-approve
     
 
     - name: Configure kubectl
       run: |
-        aws eks update-kubeconfig --name my-eks-cluster --region $AWS_REGION
+        aws eks update-kubeconfig --name my-eks-cluster --region us-east-1
 
     - name: Clean up old resources
       run: |
@@ -70,9 +70,6 @@ jobs:
           --namespace microservices \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    - name: aws-auth
-      run: |
-        kubectl apply -f aws-auth.yaml
 
     - name: Deploy App
       run: |
