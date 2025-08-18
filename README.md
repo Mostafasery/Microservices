@@ -49,14 +49,16 @@ docker push ghcr.io/ mostafasery /microservices:latest
 
 3.Provision EKS Cluster using Terraform
 Initialize Terraform and apply configuration:
-terraform init
-terraform apply -auto-approve
-terraform destroy -auto-approve
+  terraform init
+  terraform apply -auto-approve
+
 This creates:
 •	VPC, Subnets, Security Groups
 •	EKS Cluster
 •	Node Group
 •	IAM Roles for Kubernetes authentication
+To destroy resources after testing:
+  terraform destroy -auto-approve
 
 
 4.Configure Kubernetes access
@@ -109,7 +111,7 @@ Kubernetes Manifests
 The deployment references the Docker image from GHCR and the service exposes port 80 to the public using ELB loadbalancer service type of AWS
 ________________________________________
 Prometheus Deployment
-Prometheus is deployed using Helm in the monitoring namespace and exposed with a LoadBalancer to monitor cluster metrics.
+Prometheus is deployed using Helm in the monitoring namespace and exposed with a ELB LoadBalancer to monitor cluster metrics.
 Key commands:
 helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace
 kubectl patch svc prometheus-server -n monitoring -p '{"spec": {"type": "LoadBalancer"}}'
