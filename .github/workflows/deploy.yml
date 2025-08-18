@@ -47,34 +47,34 @@ jobs:
     #     terraform apply -auto-approve
     
 
-    - name: Configure kubectl
-      run: |
-        aws eks update-kubeconfig --name my-eks-cluster --region us-east-1
+    # - name: Configure kubectl
+    #   run: |
+    #     aws eks update-kubeconfig --name my-eks-cluster --region us-east-1
 
-    - name: Clean up old resources
-      run: |
-        kubectl delete deployment myflaskapp -n microservices --ignore-not-found
-        kubectl delete service myflaskapp-service -n microservices --ignore-not-found
-        kubectl delete secret ghcr-secret -n microservices --ignore-not-found
+    # - name: Clean up old resources
+    #   run: |
+    #     kubectl delete deployment myflaskapp -n microservices --ignore-not-found
+    #     kubectl delete service myflaskapp-service -n microservices --ignore-not-found
+    #     kubectl delete secret ghcr-secret -n microservices --ignore-not-found
 
-    - name: Ensure namespace exists
-      run: kubectl apply -f k8s/namespace.yaml
+    # - name: Ensure namespace exists
+    #   run: kubectl apply -f k8s/namespace.yaml
 
-    - name: Create or update GHCR secret
-      run: |
-        kubectl create secret docker-registry ghcr-secret \
-          --docker-server=ghcr.io \
-          --docker-username=${{ secrets.GHCR_USERNAME }} \
-          --docker-password=${{ secrets.GHCR_PAT }} \
-          --docker-email=${{ secrets.GHCR_EMAIL }} \
-          --namespace microservices \
-          --dry-run=client -o yaml | kubectl apply -f -
+    # - name: Create or update GHCR secret
+    #   run: |
+    #     kubectl create secret docker-registry ghcr-secret \
+    #       --docker-server=ghcr.io \
+    #       --docker-username=${{ secrets.GHCR_USERNAME }} \
+    #       --docker-password=${{ secrets.GHCR_PAT }} \
+    #       --docker-email=${{ secrets.GHCR_EMAIL }} \
+    #       --namespace microservices \
+    #       --dry-run=client -o yaml | kubectl apply -f -
 
 
-    - name: Deploy App
-      run: |
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
+    # - name: Deploy App
+    #   run: |
+    #     kubectl apply -f k8s/deployment.yaml
+    #     kubectl apply -f k8s/service.yaml
 
-    - name: Check pods
-      run: kubectl get pods -n microservices
+    # - name: Check pods
+    #   run: kubectl get pods -n microservices
