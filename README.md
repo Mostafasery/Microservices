@@ -33,19 +33,18 @@ The deployment consists of the following components:
 •	GitHub Actions – CI/CD pipeline to automate build, push, and deployment.
 •	Prometheus – Monitoring and metrics collection for the cluster.
 ________________________________________
-Setup and Deployment Steps
+
+Setup and Deployment Steps:
+
 1.Clone the repository:
 git clone https://github.com/mostafasery/microservices.git
 cd microservices
 
- 2.Build and push Docker image:
+
+2.Build and push Docker image:
 The Flask app is containerized and pushed to GitHub Container Registry:
 docker build -t ghcr.io/mostafasery/microservices:latest .
 docker push ghcr.io/ mostafasery /microservices:latest
-
-
-
-
 
 
 3.Provision EKS Cluster using Terraform
@@ -58,6 +57,8 @@ This creates:
 •	EKS Cluster
 •	Node Group
 •	IAM Roles for Kubernetes authentication
+
+
 4.Configure Kubernetes access
 Update kubeconfig to connect to the EKS cluster:
 aws eks --region us-east-1 update-kubeconfig --name my-eks-cluster
@@ -105,14 +106,13 @@ Kubernetes Manifests
 1.	Namespace – k8s/namespace.yaml
 2.	Deployment – k8s/deployment.yaml
 3.	Service – k8s/service.yaml
-The deployment references the Docker image from GHCR and the service exposes port 80 to the public.
+The deployment references the Docker image from GHCR and the service exposes port 80 to the public using ELB loadbalancer service type of AWS
 ________________________________________
 Prometheus Deployment
 Prometheus is deployed using Helm in the monitoring namespace and exposed with a LoadBalancer to monitor cluster metrics.
 Key commands:
 helm install prometheus prometheus-community/prometheus --namespace monitoring --create-namespace
 kubectl patch svc prometheus-server -n monitoring -p '{"spec": {"type": "LoadBalancer"}}'
-
 ________________________________________
 GitHub Actions Workflow
 The CI/CD pipeline automates:
@@ -121,14 +121,13 @@ The CI/CD pipeline automates:
 3.	Kubernetes deployment for Flask microservice
 Workflow file location: .github/workflows/deploy.yml
 ________________________________________
-
-
-
 Accessing the Services
+
 •	Flask App: Use the EXTERNAL-IP of the microservice LoadBalancer.
 App URL: 
 http://ad582a901404247848a0ec2f36afffbb-899759492.us-east-1.elb.amazonaws.com/products
 http://ad582a901404247848a0ec2f36afffbb-899759492.us-east-1.elb.amazonaws.com/users
+
 •	Prometheus: Use the EXTERNAL-IP of the Prometheus server LoadBalancer.
 Prometheus URL:
 http://a762ac00939084e46a12501d0ae1b6a0-1650531739.us-east-1.elb.amazonaws.com:9090/
