@@ -8,6 +8,7 @@ Table of Contents
 •	Kubernetes Manifests
 •	Prometheus Deployment
 •	GitHub Actions Workflow
+•   .gitignore and .dockerignore
 •	Accessing the Services
 ________________________________________
 Overview
@@ -122,6 +123,22 @@ The CI/CD pipeline automates:
 2.	Terraform apply to provision infrastructure
 3.	Kubernetes deployment for Flask microservice
 Workflow file location: .github/workflows/deploy.yml
+________________________________________
+This project includes .gitignore and .dockerignore files to prevent unnecessary or sensitive files from being committed to Git or included in Docker images.
+Key points:
+•	.gitignore prevents committing:
+o	Python cache files (__pycache__/, *.pyc)
+o	Virtual environments (.venv/, venv/)
+o	IDE configs (.vscode/, .idea/)
+o	Terraform state files (*.tfstate)
+o	OS-specific files (.DS_Store, Thumbs.db)
+o	Logs (*.log, logs/)
+•	.dockerignore prevents unnecessary files from being included in Docker images, such as:
+o	Local environment files (.env)
+o	Git files (.git/, .gitignore)
+o	Python cache files
+o	Logs and temporary files (*.log, *.swp)
+This ensures that only the necessary application code and dependencies are included in the Docker image and version control.
 ________________________________________
 Accessing the Services
 
