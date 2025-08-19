@@ -161,7 +161,8 @@ resource "aws_eks_node_group" "eks_nodes" {
 # --------------------------
 # AWS Caller Identity
 # --------------------------
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {} 
+# Fetches_info_about_who_is_running_Terraform:AWS_Account_ID,user/role_ARN_and_account.
 
 # --------------------------
 # Local-exec to configure aws-auth
